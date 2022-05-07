@@ -333,10 +333,7 @@ class Ui_MainWindow(object):
         self.plotting_data(self.slider_order_val)
         # for i in range(self.slider_chunk_val):
         #     self.comboBox.addItem(str(self.slider_chunk_val - i))
-
-#testttttt
         
-
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
