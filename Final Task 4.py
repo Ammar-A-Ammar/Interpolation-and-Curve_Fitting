@@ -21,6 +21,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
+from errormap import *
+
 class MyThread(QThread):
     change_value = pyqtSignal(int)
     def run(self):
@@ -212,7 +214,7 @@ class Ui_MainWindow(object):
         self.horizontalSliderFor_Effeciacy.valueChanged.connect(lambda: self.extrapolation_change())
         self.horizontalSliderFor_FittingOrder.valueChanged.connect(lambda: self.orderchange())
         self.horizontalSliderFor_chunks.valueChanged.connect(lambda: self.chunk_change())
-        self.pushButton_For_GenerateErrorMap.clicked.connect(lambda: self.error_map())
+        self.pushButton_For_GenerateErrorMap.clicked.connect(lambda: errormap.error_map())
         self.pushButton_For_GenerateErrorMap.clicked.connect(lambda: self.start_progress_bar())
         self.comboBox_X_axis.activated.connect(self.change_text)
         self.comboBox_Y_axis.activated.connect(self.change_text)
@@ -366,100 +368,100 @@ class Ui_MainWindow(object):
     #         self.progressBar.hide()
     #         print("You can't get The error map between the same values")
     #         self.pushButton_For_GenerateErrorMap.setText("Generate Error map")
-    def error_map(self):
+    # def error_map(self):
 
-        if self.ui.start_button.text() != "Generate error map":
-            self.ui.progressBar.hide()
-            self.ui.start_button.setText("Generate error map")
-            if self.bool_heatmap == 1:
-                self.canvas1.hide()
-            return
+    #     if self.ui.start_button.text() != "Generate error map":
+    #         self.ui.progressBar.hide()
+    #         self.ui.start_button.setText("Generate error map")
+    #         if self.bool_heatmap == 1:
+    #             self.canvas1.hide()
+    #         return
 
-        self.ui.start_button.setText("Cancel")
-        self.ui.progressBar.show()
+    #     self.ui.start_button.setText("Cancel")
+    #     self.ui.progressBar.show()
 
-        comboX = self.ui.x_error_map.currentIndex()
-        comboY = self.ui.y_error_map.currentIndex()
-        if comboX == comboY:
-            self.ui.progressBar.hide()
-            print("You can't get The error map between the same values")
-            self.ui.start_button.setText("Generate error map")
-            return
+    #     comboX = self.ui.x_error_map.currentIndex()
+    #     comboY = self.ui.y_error_map.currentIndex()
+    #     if comboX == comboY:
+    #         self.ui.progressBar.hide()
+    #         print("You can't get The error map between the same values")
+    #         self.ui.start_button.setText("Generate error map")
+    #         return
 
-        if self.ui.num_of_chunksLineEdit.text() == "":
-            no_chuncks = 5
-        else:
-            no_chuncks = int(self.ui.num_of_chunksLineEdit.text())
+    #     if self.ui.num_of_chunksLineEdit.text() == "":
+    #         no_chuncks = 5
+    #     else:
+    #         no_chuncks = int(self.ui.num_of_chunksLineEdit.text())
 
-        if self.ui.num_of_chunksLineEdit.text() == "":
-            degree_value = 5
-        else:
-            degree_value = int(self.ui.lineEdit_3.text())
+    #     if self.ui.num_of_chunksLineEdit.text() == "":
+    #         degree_value = 5
+    #     else:
+    #         degree_value = int(self.ui.lineEdit_3.text())
 
-        if self.ui.num_of_chunksLineEdit.text() == "":
-            overlapping = 0.75
-            overlaprange = 5
-        else:
-            overlapping = 1 - int(self.ui.overlap_LineEdit.text()) / 100
-            overlaprange = overlapping
+    #     if self.ui.num_of_chunksLineEdit.text() == "":
+    #         overlapping = 0.75
+    #         overlaprange = 5
+    #     else:
+    #         overlapping = 1 - int(self.ui.overlap_LineEdit.text()) / 100
+    #         overlaprange = overlapping
 
-        chunck_label = list(map(str, range(1, no_chuncks + 1)))
-        degree_label = list(map(str, range(1, degree_value + 1)))
-        overlapping_label = [f"{overlapping_index}%" for overlapping_index in range(5, int(overlaprange * 5 + 5), 5)]
+    #     chunck_label = list(map(str, range(1, no_chuncks + 1)))
+    #     degree_label = list(map(str, range(1, degree_value + 1)))
+    #     overlapping_label = [f"{overlapping_index}%" for overlapping_index in range(5, int(overlaprange * 5 + 5), 5)]
 
-        overlapping_values, overlap = [], 1
-        while overlap > overlapping:
-            overlap -= .05
-            overlapping_values.append(overlap)
+    #     overlapping_values, overlap = [], 1
+    #     while overlap > overlapping:
+    #         overlap -= .05
+    #         overlapping_values.append(overlap)
 
-        plotting_options = [no_chuncks + 1,degree_value, overlapping_values] 
-        option1 = 0
-        option2=1
+    #     plotting_options = [no_chuncks + 1,degree_value, overlapping_values] 
+    #     option1 = 0
+    #     option2=1
 
-        matrix1 = []
-        for i in range(1, no_chuncks + 1):
-                matrix1.append([])
-                for j in range(degree_value):
-                    X_start_button = self.calculate_chuncks(self.x_axis_data, i, overlapping)
-                    Y_start_button = self.calculate_chuncks(self.data_amplitude, i, overlapping)
-                    errors = []
-                    for k in range(i):
-                        x_map_val = X_start_button[k]
-                        y_map_val = Y_start_button[k]
-                        error_x = self.get_error(x_map_val, y_map_val, j)
-                        errors.append(error_x)
-                    matrix1[i - 1].append(np.average(errors))
+    #     matrix1 = []
+    #     for i in range(1, no_chuncks + 1):
+    #             matrix1.append([])
+    #             for j in range(degree_value):
+    #                 X_start_button = self.calculate_chuncks(self.x_axis_data, i, overlapping)
+    #                 Y_start_button = self.calculate_chuncks(self.data_amplitude, i, overlapping)
+    #                 errors = []
+    #                 for k in range(i):
+    #                     x_map_val = X_start_button[k]
+    #                     y_map_val = Y_start_button[k]
+    #                     error_x = self.get_error(x_map_val, y_map_val, j)
+    #                     errors.append(error_x)
+    #                 matrix1[i - 1].append(np.average(errors))
 
-        matrix1 = np.array(matrix1)[::-1]
+    #     matrix1 = np.array(matrix1)[::-1]
 
-        if comboX == 1 :
-            xticklabels = chunck_label
-            matrix1 = matrix1.T
-        elif comboX == 2 :
-            xticklabels=overlapping_label
-            matrix1 = matrix1.T
+    #     if comboX == 1 :
+    #         xticklabels = chunck_label
+    #         matrix1 = matrix1.T
+    #     elif comboX == 2 :
+    #         xticklabels=overlapping_label
+    #         matrix1 = matrix1.T
 
-        elif comboX == 0:
-            xticklabels=degree_label
+    #     elif comboX == 0:
+    #         xticklabels=degree_label
             
 
         
 
-        if  comboY == 0:
-            yticklabels = degree_label[::-1]
-            matrix1 = matrix1.T
-        elif comboY == 1:
-            yticklabels=chunck_label[::-1]
-        elif comboY == 2:
-            yticklabels=overlapping_label[::-1]
+    #     if  comboY == 0:
+    #         yticklabels = degree_label[::-1]
+    #         matrix1 = matrix1.T
+    #     elif comboY == 1:
+    #         yticklabels=chunck_label[::-1]
+    #     elif comboY == 2:
+    #         yticklabels=overlapping_label[::-1]
         
-        if ((comboX == 2 and comboY == 1) or (comboX == 1 and comboY == 2)):
-            matrix1 = matrix1.T
+    #     if ((comboX == 2 and comboY == 1) or (comboX == 1 and comboY == 2)):
+    #         matrix1 = matrix1.T
 
-        fig, self.ax = plt.subplots(figsize=(3, 3))
-        self.ax = sns.heatmap(matrix1, xticklabels=xticklabels, yticklabels=yticklabels)
+    #     fig, self.ax = plt.subplots(figsize=(3, 3))
+    #     self.ax = sns.heatmap(matrix1, xticklabels=xticklabels, yticklabels=yticklabels)
 
-        self.toggle_start_button(fig)        
+    #     self.toggle_start_button(fig)        
             
     def toggle_errormap (self, fig):
         if self.bool_heatmap == 0:
@@ -499,6 +501,7 @@ class Ui_MainWindow(object):
             self.labelForEfficacy.hide()
             self.labelForNumberOfChunks.hide()
             self.labelOfNumberOfFittingOrder.hide()
+            # self.comboBox.hide()
             
             
             
@@ -511,7 +514,7 @@ class Ui_MainWindow(object):
             self.labelForEfficacy.hide()
             self.labelForNumberOfChunks.hide()
             self.labelOfNumberOfFittingOrder.hide()
-            
+            # self.comboBox.hide()
             
 
     def extrapolation_change(self):
