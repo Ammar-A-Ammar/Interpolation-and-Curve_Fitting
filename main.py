@@ -20,7 +20,7 @@ import math
 import matplotlib.pyplot as plt
 import seaborn as sns
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-
+import pyautogui
 # from errormap import error_map
 
 class MyThread(QThread):
@@ -36,13 +36,11 @@ class MyThread(QThread):
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1301, 1101)
+        MainWindow.resize( int(pyautogui.size().width* 2/3), int(pyautogui.size().height* 2/3) )
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(20, 400, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem, 3, 1, 1, 1)
+        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_for_equation_and_error = QtWidgets.QHBoxLayout()
         self.horizontalLayout_for_equation_and_error.setObjectName("horizontalLayout_for_equation_and_error")
         self.gridLayout_for_equation = QtWidgets.QGridLayout()
@@ -56,9 +54,24 @@ class Ui_MainWindow(object):
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setObjectName("comboBox")
         self.horizontalLayout_for_equation_and_error.addWidget(self.comboBox)
-        self.gridLayout_2.addLayout(self.horizontalLayout_for_equation_and_error, 0, 0, 1, 4)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 501, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem1, 1, 4, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_for_equation_and_error, 0, 0, 1, 3)
+        self.PlotWidget = QtWidgets.QWidget(self.centralwidget)
+        self.PlotWidget = PlotWidget(self.centralwidget)
+        self.PlotWidget.setStyleSheet("\n"
+"background-color: rgb(0, 0, 0);")
+        self.PlotWidget.setObjectName("PlotWidget")
+        self.gridLayout.addWidget(self.PlotWidget, 1, 0, 1, 3)
+        spacerItem = QtWidgets.QSpacerItem(5, 524, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 1, 3, 1, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(768, 5, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem1, 2, 1, 1, 1)
+        spacerItem2 = QtWidgets.QSpacerItem(767, 5, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem2, 2, 2, 1, 1)
+        spacerItem3 = QtWidgets.QSpacerItem(5, 523, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem3, 3, 0, 1, 1)
+        self.verticalLayout_for_errorMap = QtWidgets.QVBoxLayout()
+        self.verticalLayout_for_errorMap.setObjectName("verticalLayout_for_errorMap")
+        self.gridLayout.addLayout(self.verticalLayout_for_errorMap, 3, 1, 1, 1)
         self.verticalLayout_for_seetings = QtWidgets.QVBoxLayout()
         self.verticalLayout_for_seetings.setObjectName("verticalLayout_for_seetings")
         self.gridLayout_for_plot_Settings = QtWidgets.QGridLayout()
@@ -96,26 +109,26 @@ class Ui_MainWindow(object):
         self.verticalLayout_for_seetings.addLayout(self.gridLayout_for_plot_Settings)
         self.gridLayout_for_ = QtWidgets.QGridLayout()
         self.gridLayout_for_.setObjectName("gridLayout_for_")
-        self.label_FitMethodFor_X_axis = QtWidgets.QLabel(self.centralwidget)
-        self.label_FitMethodFor_X_axis.setObjectName("label_FitMethodFor_X_axis")
-        self.gridLayout_for_.addWidget(self.label_FitMethodFor_X_axis, 0, 2, 1, 1)
-        self.lineEdit_For_x_axis = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_For_x_axis.setClearButtonEnabled(True)
-        self.lineEdit_For_x_axis.setObjectName("lineEdit_For_x_axis")
-        self.gridLayout_for_.addWidget(self.lineEdit_For_x_axis, 0, 3, 1, 1)
         self.label_Y_axis = QtWidgets.QLabel(self.centralwidget)
         self.label_Y_axis.setObjectName("label_Y_axis")
         self.gridLayout_for_.addWidget(self.label_Y_axis, 2, 0, 1, 1)
         self.lineEdit_For_y_axis = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_For_y_axis.setFrame(True)
+        self.lineEdit_For_y_axis.setEchoMode(QtWidgets.QLineEdit.Normal)
         self.lineEdit_For_y_axis.setClearButtonEnabled(True)
         self.lineEdit_For_y_axis.setObjectName("lineEdit_For_y_axis")
         self.gridLayout_for_.addWidget(self.lineEdit_For_y_axis, 2, 3, 1, 1)
         self.label_FitMethodFor_Y_axis = QtWidgets.QLabel(self.centralwidget)
         self.label_FitMethodFor_Y_axis.setObjectName("label_FitMethodFor_Y_axis")
         self.gridLayout_for_.addWidget(self.label_FitMethodFor_Y_axis, 2, 2, 1, 1)
-        self.label_X_axis = QtWidgets.QLabel(self.centralwidget)
-        self.label_X_axis.setObjectName("label_X_axis")
-        self.gridLayout_for_.addWidget(self.label_X_axis, 0, 0, 1, 1)
+        self.lineEdit_For_x_axis = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_For_x_axis.setReadOnly(False)
+        self.lineEdit_For_x_axis.setClearButtonEnabled(True)
+        self.lineEdit_For_x_axis.setObjectName("lineEdit_For_x_axis")
+        self.gridLayout_for_.addWidget(self.lineEdit_For_x_axis, 0, 3, 1, 1)
+        self.label_FitMethodFor_X_axis = QtWidgets.QLabel(self.centralwidget)
+        self.label_FitMethodFor_X_axis.setObjectName("label_FitMethodFor_X_axis")
+        self.gridLayout_for_.addWidget(self.label_FitMethodFor_X_axis, 0, 2, 1, 1)
         self.comboBox_X_axis = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox_X_axis.setEditable(False)
         self.comboBox_X_axis.setCurrentText("")
@@ -132,6 +145,9 @@ class Ui_MainWindow(object):
         self.comboBox_Y_axis.addItem("")
         self.comboBox_Y_axis.addItem("")
         self.gridLayout_for_.addWidget(self.comboBox_Y_axis, 2, 1, 1, 1)
+        self.label_X_axis = QtWidgets.QLabel(self.centralwidget)
+        self.label_X_axis.setObjectName("label_X_axis")
+        self.gridLayout_for_.addWidget(self.label_X_axis, 0, 0, 1, 1)
         self.label_Z_axis = QtWidgets.QLineEdit(self.centralwidget)
         self.label_Z_axis.setClearButtonEnabled(True)
         self.label_Z_axis.setObjectName("label_Z_axis")
@@ -139,8 +155,6 @@ class Ui_MainWindow(object):
         self.label_for_Z_axis = QtWidgets.QLabel(self.centralwidget)
         self.label_for_Z_axis.setObjectName("label_for_Z_axis")
         self.gridLayout_for_.addWidget(self.label_for_Z_axis, 1, 2, 1, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(70, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_for_.addItem(spacerItem2, 0, 4, 1, 1)
         self.verticalLayout_for_seetings.addLayout(self.gridLayout_for_)
         self.verticalLayout_for_progressBar = QtWidgets.QVBoxLayout()
         self.verticalLayout_for_progressBar.setObjectName("verticalLayout_for_progressBar")
@@ -157,9 +171,6 @@ class Ui_MainWindow(object):
         self.pushButton_For_Open = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_For_Open.setObjectName("pushButton_For_Open")
         self.horizontalLayout_for_buttons.addWidget(self.pushButton_For_Open)
-        self.pushButton_For_Plot = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_For_Plot.setObjectName("pushButton_For_Plot")
-        self.horizontalLayout_for_buttons.addWidget(self.pushButton_For_Plot)
         self.pushButton_For_Delete = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_For_Delete.setObjectName("pushButton_For_Delete")
         self.horizontalLayout_for_buttons.addWidget(self.pushButton_For_Delete)
@@ -170,26 +181,10 @@ class Ui_MainWindow(object):
         self.comboBox_for_main_plot.addItem("")
         self.horizontalLayout_for_buttons.addWidget(self.comboBox_for_main_plot)
         self.verticalLayout_for_seetings.addLayout(self.horizontalLayout_for_buttons)
-        self.gridLayout_2.addLayout(self.verticalLayout_for_seetings, 3, 3, 1, 1)
-        self.frame_for_main_widget = QtWidgets.QFrame(self.centralwidget)
-        self.frame_for_main_widget.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_for_main_widget.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_for_main_widget.setObjectName("frame_for_main_widget")
-        #self.PlotWidget = QtWidgets.QWidget(self.frame_for_main_widget)
-        self.PlotWidget = PlotWidget(self.frame_for_main_widget)
-        self.PlotWidget.setGeometry(QtCore.QRect(14, 5, 1221, 451))
-        self.PlotWidget.setStyleSheet("\n"
-"background-color: rgb(0, 0, 0);")
-        self.PlotWidget.setObjectName("PlotWidget")
-        self.gridLayout_2.addWidget(self.frame_for_main_widget, 1, 0, 1, 4)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem3, 2, 0, 1, 1)
-        self.verticalLayout_for_errorMap = QtWidgets.QVBoxLayout()
-        self.verticalLayout_for_errorMap.setObjectName("verticalLayout_for_errorMap")
-        self.gridLayout_2.addLayout(self.verticalLayout_for_errorMap, 3, 0, 1, 1)
+        self.gridLayout.addLayout(self.verticalLayout_for_seetings, 3, 2, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1301, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1593, 21))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -387,16 +382,18 @@ class Ui_MainWindow(object):
             
 
     def extrapolation_change(self):
-        self.horizontalSliderFor_chunks.setValue(0)
-        self.chunk_size = 1000
-        self.slider_chunk_val=1
+        # self.horizontalSliderFor_chunks.setValue(1)
+        # self.chunk_size = 1000
+        # self.slider_chunk_val=1
         self.extrapolation_sliderval = self.horizontalSliderFor_Effeciacy.value()
+        # self.extrapolation_sliderval.
+        
         val = self.extrapolation_sliderval-1
         self.extrapolation_pecentage = 100-val*5 #100 10
         self.plotting_data(self.slider_order_val)
 
     def open_file(self):
-        self.fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, 'Open csv', QtCore.QDir.rootPath(), 'csv(*.csv)')
+        self.fileName, _ = QtWidgets.QFileDialog.getOpenFileName(filter= "csv(*.csv)")
         self.data_set = pd.read_csv(self.fileName, header=None)
         self.data_amplitude = self.data_set[1]
         self.x_axis_data = self.data_set[0]
@@ -514,38 +511,62 @@ class Ui_MainWindow(object):
         self.label_FitMethodFor_Y_axis.setText(self.comboBox_Y_axis.currentText())
         
     def latex_eqn(self, slider_order_val):
-        if self.slider_order_val<7 and self.slider_chunk_val<9:
+        # print("latex eqn function was called")
+
+        if self.slider_order_val < 11 and self.slider_chunk_val < 11:
             chunck_no = self.comboBox.currentIndex()
             coeffs = self.chunk_coeffs[chunck_no]
             res = self.residuals[chunck_no]
             eqn = []
             order = slider_order_val
-            for i in range(slider_order_val - 1):
-                eq1 = '{}\cdot x^{}'.format(ceil(coeffs[i]), order)
+            for i in range(slider_order_val ):
+                eq1 = '{}. x^{}'.format(ceil(coeffs[i]), order)
+                if order ==1:
+                    eq1 = '{}. x'.format(ceil(coeffs[i]), order)
+
+
                 order -= 1
                 eqn.append(eq1)
-            equation = ''
-            for eq in eqn:
-                equation = equation + eq + ' + '
-            latex_eqn = '$y=' + equation + '{}\cdot x'.format(ceil(coeffs[slider_order_val - 1])) + '+'+'{}\cdot$'.format(
-                round(coeffs[slider_order_val],2))
+            equation = eqn[0]
+            symbol = ''
+            for eq in eqn[1:]:
+               
+                if eq[0] == '-':
+                    symbol = ' - '
+                    eq = eq[1:]
+                else:
+                    symbol = ' + '
+                equation = equation + symbol + eq
+            
+            last_coeff = coeffs[slider_order_val ]
+            if last_coeff > 0 :
+                symbol  = ' + '
+            else:
+                symbol = ' - '
+                last_coeff = -last_coeff
+            latex_eqn = 'y=' + equation  + symbol + '{}'.format(
+                round(last_coeff, 2))
+
             if len(self.residuals) != 0:
                 res = self.residuals[chunck_no]
                 error = math.sqrt(res)
-                if (error >1):
-                    error=1
                 error_latex = '$Error = {} \%$ '.format(round(error*100,1))
-                
-                    
-                
-                self.fig_error.suptitle(error_latex, x=0.0, y=0.5, horizontalalignment='left', verticalalignment='center')
-                #self.gridLayout_For_error.draw()
+                err=round(error * 100, 1)
+                if err >= 100:
+                    err = 100
+                error_latex = 'Error = {} %'.format(err)
+                self.fig_error.suptitle(error_latex, x=0.0, y=0.5, horizontalalignment='left',
+                                           verticalalignment='center')
                 self.canvas_error.draw()
             self.fig.suptitle(latex_eqn, x=0.0, y=0.5, horizontalalignment='left', verticalalignment='center')
             self.canvas.draw()
+
+        
+
         else:
             self.fig.suptitle('', x=0.0, y=0.5, horizontalalignment='left', verticalalignment='center')
             self.canvas.draw()
+            print("  -----   ")
 
     def start_progress_bar(self):
          self.thread = MyThread()
@@ -583,6 +604,33 @@ class Ui_MainWindow(object):
         self.pushButton_For_GenerateErrorMap.setText(_translate("MainWindow", "Generate Error map"))
         self.pushButton_For_Open.setText(_translate("MainWindow", "Open"))
         self.pushButton_For_Plot.setText(_translate("MainWindow", "Plot"))
+        self.pushButton_For_Delete.setText(_translate("MainWindow", "Delete"))
+        self.comboBox_for_main_plot.setItemText(0, _translate("MainWindow", "Polynomial"))
+        self.comboBox_for_main_plot.setItemText(1, _translate("MainWindow", "spline"))
+        self.comboBox_for_main_plot.setItemText(2, _translate("MainWindow", "non-linear"))
+
+
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.labelOfNumberOfFittingOrder.setText(_translate("MainWindow", "Fitting order"))
+        self.labelForNumberOfChunks.setText(_translate("MainWindow", "Number of Chuncks"))
+        self.labelForEfficacy.setText(_translate("MainWindow", "Extrapolation"))
+        self.label_Y_axis.setText(_translate("MainWindow", "Y-axis"))
+        self.lineEdit_For_y_axis.setText(_translate("MainWindow", "9"))
+        self.label_FitMethodFor_Y_axis.setText(_translate("MainWindow", "Fit Mehtod"))
+        self.lineEdit_For_x_axis.setText(_translate("MainWindow", "5"))
+        self.label_FitMethodFor_X_axis.setText(_translate("MainWindow", "Fit Mehtod"))
+        self.comboBox_X_axis.setItemText(0, _translate("MainWindow", "Order of polynomial"))
+        self.comboBox_X_axis.setItemText(1, _translate("MainWindow", "Number of chuncks"))
+        self.comboBox_Y_axis.setItemText(0, _translate("MainWindow", "Order of polynomial"))
+        self.comboBox_Y_axis.setItemText(1, _translate("MainWindow", "Number of chuncks"))
+        self.label_X_axis.setText(_translate("MainWindow", "X-axis"))
+        self.label_Z_axis.setText(_translate("MainWindow", "7"))
+        self.label_for_Z_axis.setText(_translate("MainWindow", "Over Lapping"))
+        self.pushButton_For_GenerateErrorMap.setText(_translate("MainWindow", "Generate Error map"))
+        self.pushButton_For_Open.setText(_translate("MainWindow", "Open"))
         self.pushButton_For_Delete.setText(_translate("MainWindow", "Delete"))
         self.comboBox_for_main_plot.setItemText(0, _translate("MainWindow", "Polynomial"))
         self.comboBox_for_main_plot.setItemText(1, _translate("MainWindow", "spline"))
