@@ -85,6 +85,8 @@ class Ui_MainWindow(object):
         self.horizontalSliderFor_chunks = QtWidgets.QSlider(self.centralwidget)
         self.horizontalSliderFor_chunks.setMaximum(10)
         self.horizontalSliderFor_chunks.setPageStep(1)
+        self.horizontalSliderFor_chunks.setValue(1)
+
         self.horizontalSliderFor_chunks.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderFor_chunks.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.horizontalSliderFor_chunks.setObjectName("horizontalSliderFor_chunks")
@@ -92,6 +94,8 @@ class Ui_MainWindow(object):
         self.horizontalSliderFor_FittingOrder = QtWidgets.QSlider(self.centralwidget)
         self.horizontalSliderFor_FittingOrder.setMaximum(10)
         self.horizontalSliderFor_FittingOrder.setPageStep(1)
+        self.horizontalSliderFor_FittingOrder.setValue(1)
+
         self.horizontalSliderFor_FittingOrder.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderFor_FittingOrder.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.horizontalSliderFor_FittingOrder.setObjectName("horizontalSliderFor_FittingOrder")
@@ -218,7 +222,6 @@ class Ui_MainWindow(object):
         self.extrapolation_sliderval = 1
         self.extrapolation_pecentage = 100
         self.bool_heatmap = 0
-
     
 
 
@@ -392,6 +395,8 @@ class Ui_MainWindow(object):
         self.extrapolation_pecentage = 100-val*5 #100 10
         self.plotting_data(self.slider_order_val)
 
+
+
     def open_file(self):
         self.fileName, _ = QtWidgets.QFileDialog.getOpenFileName(filter= "csv(*.csv)")
         self.data_set = pd.read_csv(self.fileName, header=None)
@@ -454,6 +459,10 @@ class Ui_MainWindow(object):
             p = np.poly1d(self.coeffs)
             self.PlotWidget.plot(t,p(t),pen = self.pen_blue)
 
+            self.PlotWidget.plot(t[int(len(t)*extrapolation_fraction):],p(t)[int(len(t)*extrapolation_fraction):],pen=self.pen_red)
+
+                # self.region.setValue(y)
+
     def splineInterpolation(self):
         self.PlotWidget.clear()
         self.PlotWidget.plot(self.x_axis_data,self.data_amplitude)
@@ -504,7 +513,14 @@ class Ui_MainWindow(object):
             self.chunk_size=0
         self.plotting_data(self.slider_order_val)
         for i in range(self.slider_chunk_val):
-                self.comboBox.addItem(str(self.slider_chunk_val - i))
+            z=self.extrapolation_sliderval/10
+            z2=self.x_axis_data[int(len(self.x_axis_data)*z)]
+            x=[z2]
+            z3 = self.data_amplitude[int(len(self.x_axis_data) * z)]
+            y=[z3]
+            self.PlotWidget.plot(x, y, symbol='o', pen=None)
+            self.comboBox.addItem(str(self.slider_chunk_val - i))
+
 
     def change_text(self):
         self.label_FitMethodFor_X_axis.setText(self.comboBox_X_axis.currentText())
